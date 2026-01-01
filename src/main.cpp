@@ -11,7 +11,7 @@
 #define CLR_PWD     0x02
 #define SET_PWD     0x01
 
-#define HASH_LBA    0      // <--- put your first CMD18 LBA here
+#define HASH_LBA    0      // put your first CMD18 LBA here
 #define HASH_COUNT  256    // number of 512B sectors to hash (e.g., 256 = 128 KiB)
 
 Sd2Card card;
@@ -19,7 +19,7 @@ Sd2Card card;
 // password sequence
 // FE | 00    | 10     | B2 BA B3 BC B0 DF B7 B0 B1 BB BE CE CB B2 DF DF | E1 D9 | ...
 
-// Your 16-byte password (from earlier reverse work)
+// 16-byte password
 static uint8_t password[16] = {
     0xB2, 0xBA, 0xB3, 0xBC,
     0xB0, 0xDF, 0xB7, 0xB0,
@@ -177,7 +177,7 @@ void cmd_clear_pwd()
 //  - send ASCII header "STARTIMG\n"
 //  - send 4 bytes LE: block_count (uint32_t little-endian)
 //  - send block_count * 512 raw bytes
-// Important: caller must capture raw bytes on host side (we provide a Python script).
+// Important: caller must capture raw bytes on host side (see python script)
 
 bool dump_card_over_serial()
 {
