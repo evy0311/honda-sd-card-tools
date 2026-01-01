@@ -2,6 +2,8 @@
 
 This project contains Teensy firmware and host scripts for interacting with locked Honda SD cards at the raw block level. It is primarily intended for inspection, backup, and research of SD cards that use the SD CMD42 password lock feature.
 
+This firmware is specifically designed to work with Honda navigation SD cards used in Windows CE based Honda head units, primarily found in model years 2014 through 2017, with some limited compatibility extending into later model years depending on the head unit generation.
+
 The firmware runs on a Teensy 4.1 using SPI mode and the danman fork of the Arduino SD library. Communication happens over USB serial to an SD card breakout board. The following was used from SparkFun Electronics: [SparkFun SD Sniffer](https://www.sparkfun.com/sd-sniffer.html)
 
 ## Features
@@ -9,7 +11,8 @@ The firmware runs on a Teensy 4.1 using SPI mode and the danman fork of the Ardu
 - Initialize SD cards over SPI
 - Read and print the card CID
 - Preview sector 0
-- Unlock, set, and clear SD passwords using CMD42
+- Unlock Honda SD cards using CMD42 with the known Honda navigation password
+- Set and clear SD passwords using CMD42
 - Full card dump with metadata header
 - Byte exact raw card dump with zero framing or logging
 - CRC32 hashing of arbitrary LBA ranges for verification
@@ -53,6 +56,21 @@ After flashing, open a serial monitor at 115200 baud to access the command menu.
 | H | CRC32 over supplied LBA range |
 | K | CRC32 over hard coded range |
 | h or ? | Show help |
+
+## Honda SD Card Password
+
+Honda navigation SD cards used in Windows CE based head units are protected using the SD CMD42 password lock mechanism.
+
+Through SD bus sniffing with a logic analyzer, the following 16 byte password was recovered from an authentic Honda head unit during normal operation:
+
+```
+95 D5 9D E5
+86 FD BD 85
+8D DD F6 76
+5D 96 FE FF
+```
+
+This firmware uses the above password when issuing CMD42 UNLOCK and CLEAR commands. The password is hard coded and intended solely for use with genuine Honda navigation SD cards. Using this password on non Honda cards or incorrect model years may permanently lock the card.
 
 ## Dump Modes
 
@@ -125,6 +143,7 @@ If the serial stream stalls or returns fewer bytes than expected, the script abo
 - Always verify the password bytes before issuing SET or CLEAR commands
 - Do not remove power or the SD card during a dump
 - Raw dumps can take several minutes depending on card size and USB speed
+- This tool is intended only for Honda navigation SD cards and should not be used on arbitrary SD media
 
 ## Intended Use
 
